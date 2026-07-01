@@ -22,7 +22,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="css/styles.css?v=2" />
+  <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin />
+  <link rel="stylesheet" href="css/styles.css?v=4" />
 </head>
 <body>
   <div class="aurora-bg" aria-hidden="true"><span class="blob b1"></span><span class="blob b2"></span><span class="blob b3"></span></div>
@@ -59,9 +60,18 @@
   </header>
 
   <main class="cv">
-    <figure class="cv-doc">
-      <img src="cv-page-1.png?v=2" alt="Currículo de Aleson Pereira Pungirum — página 1" loading="eager" />
-    </figure>
+    <div class="pdf-bar">
+      <span class="pdf-label">📄 Currículo (PDF)</span>
+      <div class="zoom">
+        <button id="zoomOut" aria-label="Diminuir zoom">−</button>
+        <span id="zoomLevel">100%</span>
+        <button id="zoomIn" aria-label="Aumentar zoom">+</button>
+      </div>
+    </div>
+
+    <div id="pdf" class="pdf-view" role="document" aria-label="Currículo em PDF">
+      <div class="pdf-status" id="pdfStatus">Carregando currículo…</div>
+    </div>
 
     <a class="btn primary wide" href="curriculo-aleson-pungirum.pdf" download>
       <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12m0 0 4-4m-4 4-4-4M5 21h14"/></svg>
@@ -70,8 +80,58 @@
     <p class="foot">© <span id="yr"></span> Aleson Pereira Pungirum · Desenvolvedor Full Stack</p>
   </main>
 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
   <script>
     document.getElementById('yr').textContent = new Date().getFullYear();
+
+    const PDF_URL = 'curriculo-aleson-pungirum.pdf';
+    const container = document.getElementById('pdf');
+    const statusEl = document.getElementById('pdfStatus');
+    const zoomLabel = document.getElementById('zoomLevel');
+    let pdfDoc = null, zoom = 1, rendering = false, pending = false;
+
+    if (window.pdfjsLib) {
+      pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+    }
+
+    async function renderAll() {
+      if (!pdfDoc) return;
+      if (rendering) { pending = true; return; }
+      rendering = true;
+      const dpr = Math.min(window.devicePixelRatio || 1, 2.5);
+      const innerW = container.clientWidth - 20; // desconta padding
+      container.querySelectorAll('canvas').forEach(c => c.remove());
+      for (let n = 1; n <= pdfDoc.numPages; n++) {
+        const page = await pdfDoc.getPage(n);
+        const base = page.getViewport({ scale: 1 });
+        const scale = (innerW / base.width) * zoom;      // fit-to-width * zoom
+        const vp = page.getViewport({ scale: scale * dpr });
+        const canvas = document.createElement('canvas');
+        canvas.className = 'pdf-page';
+        canvas.width = vp.width; canvas.height = vp.height;
+        canvas.style.width = (base.width * scale) + 'px';
+        canvas.style.height = (base.height * scale) + 'px';
+        container.appendChild(canvas);
+        await page.render({ canvasContext: canvas.getContext('2d'), viewport: vp }).promise;
+      }
+      rendering = false;
+      if (pending) { pending = false; renderAll(); }
+    }
+
+    function loadPdf() {
+      if (!window.pdfjsLib) { statusEl.textContent = 'Não foi possível carregar o visualizador. Toque em "Baixar em PDF".'; return; }
+      pdfjsLib.getDocument(PDF_URL).promise.then(doc => {
+        pdfDoc = doc; if (statusEl) statusEl.remove(); renderAll();
+      }).catch(() => { statusEl.textContent = 'Não foi possível carregar o PDF. Toque em "Baixar em PDF".'; });
+    }
+
+    function setZoom(z) { zoom = Math.max(0.5, Math.min(3, Math.round(z * 100) / 100)); zoomLabel.textContent = Math.round(zoom * 100) + '%'; renderAll(); }
+    document.getElementById('zoomIn').addEventListener('click', () => setZoom(zoom + 0.25));
+    document.getElementById('zoomOut').addEventListener('click', () => setZoom(zoom - 0.25));
+
+    let rt; window.addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(renderAll, 250); });
+    window.addEventListener('load', loadPdf);
+
     if ('serviceWorker' in navigator) window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));
   </script>
 </body>

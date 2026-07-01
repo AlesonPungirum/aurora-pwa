@@ -1,11 +1,10 @@
 /* Currículo Aleson — service worker offline. */
-const VERSION = 'cv-v2';
+const VERSION = 'cv-v4';
 const ASSETS = [
   './',
   './index.html',
-  './css/styles.css?v=2',
+  './css/styles.css?v=4',
   './manifest.webmanifest?v=2',
-  './cv-page-1.png?v=2',
   './curriculo-aleson-pungirum.pdf',
   './icons/icon-192.png?v=2',
   './icons/icon-512.png?v=2',
