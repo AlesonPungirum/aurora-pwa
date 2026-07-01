@@ -1,14 +1,14 @@
 /* Currículo Aleson — service worker offline. */
-const VERSION = 'cv-v1';
+const VERSION = 'cv-v2';
 const ASSETS = [
   './',
   './index.html',
-  './css/styles.css?v=1',
-  './manifest.webmanifest?v=1',
-  './cv-page-1.png?v=1',
+  './css/styles.css?v=2',
+  './manifest.webmanifest?v=2',
+  './cv-page-1.png?v=2',
   './curriculo-aleson-pungirum.pdf',
-  './icons/icon-192.png',
-  './icons/icon-512.png',
+  './icons/icon-192.png?v=2',
+  './icons/icon-512.png?v=2',
 ];
 
 self.addEventListener('install', (e) => {
