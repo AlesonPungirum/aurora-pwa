@@ -26,6 +26,43 @@
     <span class="blob b3"></span>
   </div>
 
+  <!-- TELA DE INSTALAÇÃO (primeira coisa que aparece) -->
+  <div class="install-screen" id="installScreen" hidden>
+    <div class="install-inner">
+      <img class="install-icon" src="icons/icon-512.png" alt="Aurora" width="120" height="120" />
+      <h1 class="install-title">Aurora</h1>
+      <p class="install-sub">Foco &amp; Hábitos · Pomodoro, tarefas e streaks. Funciona offline.</p>
+
+      <ul class="install-perks">
+        <li>📲 Instale como app — abre em tela cheia, sem barra do navegador</li>
+        <li>⚡ Rápido e offline — seus dados ficam no seu aparelho</li>
+        <li>🔔 Alertas de foco com som e vibração</li>
+      </ul>
+
+      <!-- Android / Desktop com suporte a instalação nativa -->
+      <button class="install-cta" id="installCta">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12m0 0 4-4m-4 4-4-4M5 21h14"/></svg>
+        Instalar aplicativo
+      </button>
+
+      <!-- Instruções manuais (iOS ou navegador sem prompt) -->
+      <div class="install-manual" id="installManual" hidden>
+        <div class="manual-ios" id="manualIos" hidden>
+          <p>Para instalar no iPhone/iPad:</p>
+          <ol>
+            <li>Toque em <b>Compartilhar</b> <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-3px"><path d="M12 16V4m0 0 4 4m-4-4L8 8"/><path d="M5 12v7a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-7"/></svg></li>
+            <li>Escolha <b>Adicionar à Tela de Início</b> ➕</li>
+          </ol>
+        </div>
+        <div class="manual-generic" id="manualGeneric" hidden>
+          <p>No menu <b>⋮</b> do navegador, toque em <b>Instalar app</b> / <b>Adicionar à tela inicial</b>.</p>
+        </div>
+      </div>
+
+      <button class="install-skip" id="installSkip">Continuar no navegador →</button>
+    </div>
+  </div>
+
   <header class="topbar">
     <div class="brand">
       <svg class="logo" viewBox="0 0 48 48" aria-hidden="true">

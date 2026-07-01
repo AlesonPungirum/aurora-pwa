@@ -182,15 +182,56 @@
 
   /* ================= INSTALAÇÃO PWA ================= */
   let deferredPrompt = null;
-  const installBtn = $('#installBtn');
-  window.addEventListener('beforeinstallprompt', e => { e.preventDefault(); deferredPrompt = e; installBtn.classList.remove('hidden'); });
-  installBtn.addEventListener('click', async () => {
-    if (!deferredPrompt) return;
-    deferredPrompt.prompt(); const { outcome } = await deferredPrompt.userChoice;
-    if (outcome === 'accepted') toast('App instalado! 🚀');
+  const installBtn = $('#installBtn');       // botão no topo (fallback)
+  const screen = $('#installScreen');
+  const cta = $('#installCta');
+  const manual = $('#installManual');
+  const manualIos = $('#manualIos');
+  const manualGeneric = $('#manualGeneric');
+  const skip = $('#installSkip');
+
+  const isStandalone = () => window.matchMedia('(display-mode: standalone)').matches
+    || window.navigator.standalone === true;
+  const ua = navigator.userAgent || '';
+  const isIOS = /iphone|ipad|ipod/i.test(ua) || (/Macintosh/.test(ua) && 'ontouchend' in document);
+
+  function hideScreen() { screen.hidden = true; }
+  function showManual() {
+    cta.hidden = true; manual.hidden = false;
+    if (isIOS) manualIos.hidden = false; else manualGeneric.hidden = false;
+  }
+  function openScreen() {
+    if (isStandalone() || store.get('installDismissed', false)) return; // já instalado ou dispensado antes
+    screen.hidden = false;
+    if (isIOS) showManual();          // iOS não dispara beforeinstallprompt
+    // Android/desktop: espera o evento; se não vier em 1,2s, mostra instruções manuais
+    else if (!deferredPrompt) setTimeout(() => { if (!deferredPrompt && !screen.hidden) showManual(); }, 1200);
+  }
+
+  async function doInstall() {
+    if (!deferredPrompt) { showManual(); return; }
+    deferredPrompt.prompt();
+    const { outcome } = await deferredPrompt.userChoice;
     deferredPrompt = null; installBtn.classList.add('hidden');
+    if (outcome === 'accepted') { toast('Instalando… 🚀'); }
+    else { toast('Você pode instalar depois pelo botão ↑'); hideScreen(); }
+  }
+
+  window.addEventListener('beforeinstallprompt', e => {
+    e.preventDefault(); deferredPrompt = e;
+    installBtn.classList.remove('hidden');   // fallback no topo
+    if (!screen.hidden) { cta.hidden = false; manual.hidden = true; } // garante CTA nativa na tela
   });
-  window.addEventListener('appinstalled', () => { installBtn.classList.add('hidden'); toast('Aurora instalado 🎉'); });
+
+  cta.addEventListener('click', doInstall);
+  installBtn.addEventListener('click', doInstall);
+  skip.addEventListener('click', () => { store.set('installDismissed', true); hideScreen(); });
+
+  window.addEventListener('appinstalled', () => {
+    installBtn.classList.add('hidden'); hideScreen(); toast('Aurora instalado 🎉');
+  });
+
+  openScreen();
 
   /* ================= SERVICE WORKER ================= */
   if ('serviceWorker' in navigator) {

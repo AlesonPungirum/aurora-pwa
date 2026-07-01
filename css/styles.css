@@ -45,6 +45,52 @@ body{
 @keyframes float{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(4%,6%) scale(1.08)}66%{transform:translate(-4%,-3%) scale(.96)}}
 @media (prefers-reduced-motion: reduce){.blob{animation:none}}
 
+/* Tela de instalação */
+.install-screen{
+  position:fixed;inset:0;z-index:100;
+  display:flex;align-items:center;justify-content:center;padding:26px;
+  background:linear-gradient(160deg, rgba(11,16,32,.86), rgba(11,16,32,.72));
+  backdrop-filter:blur(18px);
+  animation:fade .4s ease;
+}
+:root[data-theme="light"] .install-screen{background:linear-gradient(160deg, rgba(238,241,251,.9), rgba(238,241,251,.75))}
+.install-screen[hidden]{display:none}
+.install-inner{
+  width:100%;max-width:400px;text-align:center;
+  background:var(--surface);border:1px solid var(--border);border-radius:28px;
+  box-shadow:var(--shadow);backdrop-filter:blur(16px);
+  padding:32px 24px 22px;animation:pop .45s cubic-bezier(.2,.9,.3,1.2);
+}
+@keyframes pop{from{opacity:0;transform:translateY(18px) scale(.96)}to{opacity:1;transform:none}}
+.install-icon{border-radius:26px;box-shadow:0 14px 40px rgba(124,92,255,.5);margin-bottom:14px}
+.install-title{margin:0;font-size:2rem;font-weight:800;letter-spacing:.5px;
+  background:linear-gradient(120deg,var(--accent),var(--accent-2),var(--accent-3));
+  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.install-sub{color:var(--muted);font-size:.9rem;margin:6px 0 18px;line-height:1.5}
+.install-perks{list-style:none;margin:0 0 22px;padding:0;text-align:left;display:flex;flex-direction:column;gap:11px}
+.install-perks li{font-size:.86rem;color:var(--text);background:var(--surface-2);border:1px solid var(--border);
+  padding:11px 14px;border-radius:14px;line-height:1.4}
+.install-cta{
+  width:100%;border:0;border-radius:18px;padding:16px;cursor:pointer;
+  font-family:inherit;font-weight:700;font-size:1.05rem;color:#fff;
+  display:inline-flex;align-items:center;justify-content:center;gap:10px;
+  background:linear-gradient(135deg,var(--accent),var(--accent-3));
+  box-shadow:0 12px 30px rgba(124,92,255,.5);transition:.2s;
+}
+.install-cta:active{transform:scale(.98)}
+.install-cta[hidden]{display:none}
+.install-manual{margin-top:6px}
+.install-manual[hidden]{display:none}
+.install-manual p{color:var(--text);font-size:.9rem;margin:0 0 8px}
+.install-manual ol{text-align:left;color:var(--muted);font-size:.88rem;margin:0;padding-left:20px;line-height:1.8}
+.install-manual b{color:var(--text)}
+.manual-ios[hidden],.manual-generic[hidden]{display:none}
+.install-skip{
+  margin-top:16px;border:0;background:transparent;color:var(--muted);
+  font-family:inherit;font-size:.85rem;cursor:pointer;padding:8px;text-decoration:underline;text-underline-offset:3px;
+}
+.install-skip:hover{color:var(--text)}
+
 /* Topbar */
 .topbar{
   position:sticky;top:0;z-index:20;
