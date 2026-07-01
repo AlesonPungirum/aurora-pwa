@@ -1,10 +1,10 @@
 /* Aurora Service Worker — cache offline-first com fallback de rede. */
-const VERSION = 'aurora-v2';
+const VERSION = 'aurora-v3';
 const ASSETS = [
   './',
   './index.html',
-  './css/styles.css',
-  './js/app.js',
+  './css/styles.css?v=2',
+  './js/app.js?v=2',
   './manifest.webmanifest',
   './icons/favicon.svg',
   './icons/icon-192.png',
